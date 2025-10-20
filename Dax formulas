@@ -1,0 +1,103 @@
+file contains Virat Kohli’s match stats, with these columns:
+
+index | runs | opponent | ground | date | match | Match_No | total
+
+
+Power BI DAX formulas and snippets for this dataset �
+
+ 1. Total Runs
+Total Runs = SUM(Source[runs])
+
+
+➡ Shows total career runs across all matches.
+
+ 2. Total Matches Played
+Total Matches = COUNTROWS(Source)
+
+
+➡ Counts the total number of matches played.
+
+ 3. Average Runs per Match
+Average Runs = DIVIDE(SUM(Source[runs]), COUNTROWS(Source))
+
+
+➡ Calculates Virat’s average runs per match.
+
+ 4. Highest Score
+Highest Score = MAX(Source[runs])
+
+
+➡ Displays Virat’s top individual score.
+
+📈 5. Running Total (Cumulative Runs)
+Cumulative Runs = 
+CALCULATE(
+    SUM(Source[runs]),
+    FILTER(
+        ALLSELECTED(Source),
+        Source[Match_No] <= MAX(Source[Match_No])
+    )
+)
+
+
+➡ Plots the progression of total runs match by match (use in a line chart with Match_No on the X-axis).
+
+ 6. Total Runs by Opponent
+Runs by Opponent = SUM(Source[runs])
+
+
+➡ Use this in a bar chart with opponent on the X-axis.
+
+ 7. Total Runs by Ground
+Runs by Ground = SUM(Source[runs])
+
+
+➡ Great for a map visualization or table chart showing grounds and total runs.
+
+📊 8. Filter for ODI Matches (if multiple formats added later)
+ODI Runs = 
+CALCULATE(
+    SUM(Source[runs]),
+    Source[match] = "ODI"
+)
+
+ 9. Year Extraction (Power Query snippet)
+
+If you want to extract Year from the date column in Power Query:
+
+= Table.AddColumn(Source, "Year", each Date.Year(Date.FromText([date])), Int64.Type)
+
+-- Columns for 100s,50s 
+100s = 
+VAR res = SWITCH(TRUE(),
+    'Virat_Kohli'[runs]>=100 && 'Virat_Kohli'[runs]<200, 1,
+    'Virat_Kohli'[runs]>=200 && 'Virat_Kohli'[runs]<300, 2,
+    'Virat_Kohli'[runs]>=300 && 'Virat_Kohli'[runs]<400, 3,
+    0)
+RETURN res
+
+-------------------------------------------------------------
+
+50s = 
+VAR res = SWITCH(TRUE(),
+    'Virat_Kohli'[runs]>=50 && 'Virat_Kohli'[runs]<99, 1,
+    'Virat_Kohli'[runs]>=150 && 'Virat_Kohli'[runs]<199, 1,
+    'Virat_Kohli'[runs]>=250 && 'Virat_Kohli'[runs]<299, 1,
+    0)
+RETURN res
+
+
+
+100s = SUM(Virat_Kohli[100s])
+
+30+ = SUM(Virat_Kohli[30+])
+
+50s = SUM(Virat_Kohli[50s])
+
+HighestScore = MAX(Virat_Kohli[runs])
+
+Runs = SUM(Virat_Kohli[runs])
+
+Total_Matches = COUNT(Virat_Kohli[opponent]) 
+
+➡ Then you can use Year for trend visuals.
