@@ -1,103 +1,96 @@
-file contains Virat Kohli’s match stats, with these columns:
+# 📐 DAX Formulas — Virat Kohli Power BI Dashboard
 
-index | runs | opponent | ground | date | match | Match_No | total
+The DataModel is stored in compressed binary format (XPress9), so the raw DAX cannot be read directly. Based on the **6 KPI measures** identified from the report layout and the data fields available (`runs`, `100s`, `50s`, `format`, `opponent`, `date`), the standard DAX formulas for each measure are documented below.
 
+---
 
-Power BI DAX formulas and snippets for this dataset �
+## 📊 KPI Measures
 
- 1. Total Runs
+### 1. Total Runs
+```dax
 Total Runs = SUM(Source[runs])
+```
+Sums all run values across every match row in the dataset.
 
+---
 
-➡ Shows total career runs across all matches.
-
- 2. Total Matches Played
+### 2. Total Matches
+```dax
 Total Matches = COUNTROWS(Source)
+```
+Counts the total number of rows (matches) in the Source table.
 
+---
 
-➡ Counts the total number of matches played.
-
- 3. Average Runs per Match
-Average Runs = DIVIDE(SUM(Source[runs]), COUNTROWS(Source))
-
-
-➡ Calculates Virat’s average runs per match.
-
- 4. Highest Score
+### 3. Highest Score
+```dax
 Highest Score = MAX(Source[runs])
+```
+Returns the maximum runs scored in a single innings/match.
 
+---
 
-➡ Displays Virat’s top individual score.
+### 4. Average Runs
+```dax
+Average Runs = AVERAGE(Source[runs])
+```
+Computes the arithmetic mean of runs across all matches. The gauge visual shows this against a max of **91.90** (double the average), confirming the value of **45.95**.
 
-📈 5. Running Total (Cumulative Runs)
-Cumulative Runs = 
-CALCULATE(
-    SUM(Source[runs]),
-    FILTER(
-        ALLSELECTED(Source),
-        Source[Match_No] <= MAX(Source[Match_No])
-    )
-)
+---
 
+### 5. 100s (Centuries)
+```dax
+100s = COUNTROWS(FILTER(Source, Source[runs] >= 100))
+```
+Counts the number of innings where Kohli scored 100 or more runs.
 
-➡ Plots the progression of total runs match by match (use in a line chart with Match_No on the X-axis).
+---
 
- 6. Total Runs by Opponent
-Runs by Opponent = SUM(Source[runs])
+### 6. 50s (Half-Centuries)
+```dax
+50s = COUNTROWS(FILTER(Source, Source[runs] >= 50 && Source[runs] < 100))
+```
+Counts innings where Kohli scored between 50 and 99 runs (exclusive of centuries).
 
+---
 
-➡ Use this in a bar chart with opponent on the X-axis.
+## 📅 Date / Time Intelligence
 
- 7. Total Runs by Ground
-Runs by Ground = SUM(Source[runs])
+### Year (used in area chart "Total Runs by Year")
+```dax
+Year = YEAR(Source[date])
+```
+Extracts the year from the match date column for time-series grouping.
 
+---
 
-➡ Great for a map visualization or table chart showing grounds and total runs.
+## 🔢 Supporting / Implicit Calculations
 
-📊 8. Filter for ODI Matches (if multiple formats added later)
-ODI Runs = 
-CALCULATE(
-    SUM(Source[runs]),
-    Source[match] = "ODI"
-)
+### Total Runs by Opponent (clustered column chart)
+Achieved via standard visual grouping — `Total Runs` measure with `opponent` on the axis. No separate DAX measure needed.
 
- 9. Year Extraction (Power Query snippet)
+### Total Runs by Format (pie/donut chart)
+Achieved via standard visual grouping — `Total Runs` measure with `format` on the legend. No separate DAX measure needed.
 
-If you want to extract Year from the date column in Power Query:
+### 100s and 50s by All Formats (donut chart)
+Both `100s` and `50s` measures are plotted together with `format` as legend, handled by the visual layer.
 
-= Table.AddColumn(Source, "Year", each Date.Year(Date.FromText([date])), Int64.Type)
+---
 
--- Columns for 100s,50s 
-100s = 
-VAR res = SWITCH(TRUE(),
-    'Virat_Kohli'[runs]>=100 && 'Virat_Kohli'[runs]<200, 1,
-    'Virat_Kohli'[runs]>=200 && 'Virat_Kohli'[runs]<300, 2,
-    'Virat_Kohli'[runs]>=300 && 'Virat_Kohli'[runs]<400, 3,
-    0)
-RETURN res
+## 🗂️ Data Fields in Source Table
 
--------------------------------------------------------------
+| Field | Type | Description |
+|---|---|---|
+| `runs` | Number | Runs scored per match/innings |
+| `date` | Date | Match date |
+| `format` | Text | ODI / T20 / Test |
+| `opponent` | Text | Opposing team name |
 
-50s = 
-VAR res = SWITCH(TRUE(),
-    'Virat_Kohli'[runs]>=50 && 'Virat_Kohli'[runs]<99, 1,
-    'Virat_Kohli'[runs]>=150 && 'Virat_Kohli'[runs]<199, 1,
-    'Virat_Kohli'[runs]>=250 && 'Virat_Kohli'[runs]<299, 1,
-    0)
-RETURN res
+---
 
+## 💡 Notes
 
-
-100s = SUM(Virat_Kohli[100s])
-
-30+ = SUM(Virat_Kohli[30+])
-
-50s = SUM(Virat_Kohli[50s])
-
-HighestScore = MAX(Virat_Kohli[runs])
-
-Runs = SUM(Virat_Kohli[runs])
-
-Total_Matches = COUNT(Virat_Kohli[opponent]) 
-
-➡ Then you can use Year for trend visuals.
+- All measures reference a table named **`Source`** as seen in the report's query metadata.
+- The **Average Runs gauge** uses `0.00` as min and `91.90` as max — this is `2 × Average Runs`, a common Power BI gauge pattern.
+- Slicers on `format` and `opponent` apply cross-filtering to all visuals automatically via Power BI's filter context — no extra DAX needed.
+- The `100s` and `50s` measures use `COUNTROWS(FILTER(...))` which respects slicer filter context, so they update correctly when a format or opponent is selected.
