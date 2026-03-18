@@ -1,70 +1,89 @@
-# 🏏 Virat Kohli Career Performance Dashboard | Power BI
+# 🏏 Virat Kohli Performance Dashboard — Power BI
 
-### 📊 Interactive Cricket Analytics Dashboard built in Power BI
-
-This project visualizes **Virat Kohli’s batting performance** across his international matches.  
-It highlights insights such as his **total runs, consistency, top scores, and performance trends** against various opponents and venues.
+> An interactive Power BI dashboard analyzing Virat Kohli's international cricket career statistics across all formats.
 
 ---
 
-## 📁 Dataset Overview
+##  Dashboard Preview
 
-**File:** `Source.csv`  
-
-| Column | Description |
-|:--------|:-------------|
-| `index` | Match sequence number |
-| `runs` | Runs scored in the match |
-| `opponent` | Opponent team |
-| `ground` | Stadium / venue |
-| `date` | Date of the match |
-| `match` | Match format (e.g., ODI) |
-| `Match_No` | Sequential match number |
-| `total` | Running total of runs |
+![Virat Kohli Power BI Dashboard](dashboard_preview.png)
 
 ---
 
-## ⚙️ Power BI DAX Measures
+##  Dashboard Overview
 
-| Measure Name | DAX Formula | Purpose |
-|:--------------|:-------------|:---------|
-| **Total Runs** | `SUM(Source[runs])` | Total runs scored by Virat |
-| **Total Matches** | `COUNTROWS(Source)` | Number of matches played |
-| **Average Runs** | `DIVIDE(SUM(Source[runs]), COUNTROWS(Source))` | Average runs per match |
-| **Highest Score** | `MAX(Source[runs])` | Highest individual score |
-| **Cumulative Runs** | *(below)* | Running total of runs |
-```DAX
-Cumulative Runs =
-CALCULATE(
-    SUM(Source[runs]),
-    FILTER(
-        ALLSELECTED(Source),
-        Source[Match_No] <= MAX(Source[Match_No])
-    )
-)
+This dashboard provides a comprehensive visual breakdown of Virat Kohli's batting performance, enabling fans, analysts, and data enthusiasts to explore his career stats across different match formats and opponents.
 
+### Key Metrics (KPI Cards)
+| Metric | Value |
+|---|---|
+| **Total Matches** | 516 |
+| **Total Runs** | 24K |
+| **100s** | 70 |
+| **50s** | 122 |
+| **Highest Score** | 254 |
+| **Average Runs** | 45.95 |
 
-📈 Key Insights
+---
 
-⚡ Peak Consistency: Post-2012, Kohli maintained an average of 50+ across formats.
+##  Visuals Included
 
-🏟️ Favorite Opponents: Exceptional records against Sri Lanka and Australia.
+- **KPI Cards** — At-a-glance view of core career stats (Runs, Matches, Average, 100s, 50s, Highest Score)
+- **Area Chart** — Run-scoring trend over time (by date/year)
+- **Clustered Column Chart** — Performance comparison across match formats or opponents
+- **Pie / Donut Charts** — Distribution of innings/runs by format or opposition
+- **Gauge Chart** — Progress or benchmark visual (e.g., average vs. target)
+- **Slicers** — Interactive filters by **Format** (Test, ODI, T20I) and **Opponent**
+- **Player Image** — Virat Kohli portrait for a polished, professional look
 
-🌏 Strong Grounds: Notable performances in Colombo, Adelaide, and Kolkata.
+---
 
-📅 Performance Trend: Clear upward trajectory in average runs per match over time.
+##  Filters / Slicers
 
-🛠️ Tools & Technologies
+| Slicer | Options |
+|---|---|
+| **Format** | Test / ODI / T20I |
+| **Opponent** | Filter by specific opposing teams |
+| **Year** | Drill into specific time periods |
 
-Power BI Desktop – Data Modeling & Visualization
+---
 
-DAX – Custom Measures for Insights
+##  Built With
 
-Power Query (M) – Data Transformation
+- **Power BI Desktop** (`.pbix`)
+- Data source: `Source` table containing Kohli's match-level statistics
+- Custom DAX measures for aggregated KPIs
 
-Author
+---
 
-👤 Sai Kiran Reddy
-📧 saikiranr717@gmail.com
+##  Getting Started
 
-🔗 LinkedIn :https://www.linkedin.com/in/saikiran-reddy-2b6842298
+1. **Clone or download** this repository
+2. Open `virat_kholi_dashboard.pbix` in [Power BI Desktop](https://powerbi.microsoft.com/desktop/)
+3. Use the slicers to filter by **format** or **opponent**
+4. Hover over charts for detailed tooltips
+
+>  The dataset is embedded within the `.pbix` file. No external data connection is required.
+
+---
+
+##  Repository Structure
+
+```
+📦 virat-kohli-dashboard
+ ┣ 📊 virat_kholi_dashboard.pbix   # Main Power BI report file
+ ┗ 📄 README.md                    # Project documentation
+```
+
+---
+
+## 🙌 Acknowledgements
+
+- Stats sourced from publicly available cricket databases
+- Built as a data visualization portfolio project
+
+---
+
+## 📜 License
+
+This project is for educational and portfolio purposes only. All cricket statistics belong to their respective rights holders.
