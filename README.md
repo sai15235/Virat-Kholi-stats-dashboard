@@ -6,7 +6,7 @@
 
 ##  Dashboard Preview
 
-![Virat Kohli Power BI Dashboard](dashboard_preview.png)
+![Virat Kohli Power BI Dashboard](dashboard.png)
 
 ---
 
